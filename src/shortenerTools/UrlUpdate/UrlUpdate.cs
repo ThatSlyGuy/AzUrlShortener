@@ -37,6 +37,7 @@ using System.Net;
 using System.Net.Http;
 using Cloud5mins.domain;
 using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 
 namespace Cloud5mins.Function
 {
@@ -58,6 +59,11 @@ namespace Cloud5mins.Function
 
             ShortUrlEntity input = await req.Content.ReadAsAsync<ShortUrlEntity>();
             if (input == null)
+            {
+                return req.CreateResponse(HttpStatusCode.NotFound);
+            }
+
+            if (!Regex.IsMatch(input.Url, @"https:\/\/[a-z]*.*clashofstreamers.tv"))
             {
                 return req.CreateResponse(HttpStatusCode.NotFound);
             }

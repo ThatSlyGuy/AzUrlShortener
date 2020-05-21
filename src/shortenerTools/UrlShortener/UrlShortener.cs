@@ -29,6 +29,7 @@ using System.Net;
 using System.Net.Http;
 using Cloud5mins.domain;
 using Microsoft.Extensions.Configuration;
+using System.Text.RegularExpressions;
 
 namespace Cloud5mins.Function {
     public static class UrlShortener {
@@ -62,6 +63,11 @@ namespace Cloud5mins.Function {
                 string longUrl = input.Url.Trim();
                 string vanity = input.Vanity.Trim();
                 string title = input.Title.Trim();
+
+                if (!Regex.IsMatch(longUrl, @"https:\/\/[a-z]*.*clashofstreamers.tv"))
+                {
+                    return req.CreateResponse(HttpStatusCode.NotFound);
+                }
 
                 ShortUrlEntity newRow;
 
