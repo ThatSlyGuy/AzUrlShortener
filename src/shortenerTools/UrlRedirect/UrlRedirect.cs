@@ -14,14 +14,15 @@ namespace Cloud5mins.Function
     {
         [FunctionName("UrlRedirect")]
         public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "UrlRedirect/{shortUrl}")] HttpRequestMessage req,
-            string shortUrl, 
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "UrlRedirect/{shortUrl}/?lang={language}")] HttpRequestMessage req,
+            string shortUrl,
+            string language,
             ExecutionContext context,
             ILogger log)
         {
-            log.LogInformation($"C# HTTP trigger function processed for Url: {shortUrl}");
+            log.LogInformation($"C# HTTP trigger function processed for Url: {shortUrl} and language: {language}");
 
-            string redirectUrl = "https://azure.com";
+            string redirectUrl = "https://costv.guide";
 
             if (!String.IsNullOrWhiteSpace(shortUrl))
             {
