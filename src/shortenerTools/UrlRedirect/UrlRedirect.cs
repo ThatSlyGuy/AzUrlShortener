@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using Cloud5mins.domain;
 using Microsoft.Extensions.Configuration;
+using System.Web;
 
 namespace Cloud5mins.Function
 {
@@ -23,7 +24,7 @@ namespace Cloud5mins.Function
 
             string redirectUrl = "https://costv.guide";
 
-            if (!String.IsNullOrWhiteSpace(shortUrl))
+            if (!string.IsNullOrWhiteSpace(shortUrl))
             {
                 var config = new ConfigurationBuilder()
                     .SetBasePath(context.FunctionAppDirectory)
@@ -53,9 +54,22 @@ namespace Cloud5mins.Function
                 log.LogInformation("Bad Link, resorting to fallback.");
             }
 
-            var res = req.CreateResponse(HttpStatusCode.Redirect);
-            res.Headers.Add("Location", redirectUrl);
-            return res;
+            var currentQuery = HttpUtility.ParseQueryString(req.RequestUri.Query);
+
+            var redirectUriBuilder = new UriBuilder(redirectUrl);
+            var redirectQuery = HttpUtility.ParseQueryString(redirectUriBuilder.Query);
+
+            foreach (var key in currentQuery.AllKeys)
+            {
+                redirectQuery[key] = currentQuery[key];
+
+                redirectUriBuilder.Query = redirectQuery.ToString();
+            }
+
+            var response = req.CreateResponse(HttpStatusCode.Redirect);
+            response.Headers.Add("Location", redirectUriBuilder.ToString());
+
+            return response;
         }
   }
 }
